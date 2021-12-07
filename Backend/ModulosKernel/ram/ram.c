@@ -1,61 +1,71 @@
-//Header para los macros module_init y module_exit
-#include <linux/init.h>
 //Header obligatorio de todos los modulos
 #include <linux/module.h>
 //Header para usar KERN_INFO
 #include <linux/kernel.h>
 
+//Header para los macros module_init y module_exit
+#include <linux/init.h>
 //Header necesario porque se usara proc_fs
 #include <linux/proc_fs.h>
 /* for copy_from_user */
 #include <asm/uaccess.h>	
-/* Header para usar la lib seq_file y manejar el archivo en /proc*/
+//Para escribir en el Proc
 #include <linux/seq_file.h>
 
 MODULE_LICENSE("GPL");
-MODULE_DESCRIPTION("Ejemplo creacion de modulo en Linux, Laboratorio Sistemas Operativos 1");
-MODULE_AUTHOR("Bernald Renato Paxtor Peren");
+MODULE_DESCRIPTION("SOPES1 Proyecto 1, Modulo Ram");
+MODULE_AUTHOR("Audrie Annelisse del Cid Ochoa");
 
-//Función para escribir un archivo en el Proc
-static int write_file(struct seq_file *archivo, void *v){
-    seq_printf("201801263");
+//Funcion que se ejectua cada vez que se lee el archivo con el comando CAT
+static int escribir_archivo(struct seq_file *archivo, void *v)
+{   
+
+    seq_printf(archivo, "*********************************************\n");
+    seq_printf(archivo, "*********************************************\n");
+    seq_printf(archivo, "**    LABORATORIO SISTEMAS OPERATIVOS 1    **\n");
+    seq_printf(archivo, "**       EJEMPLO CREACION DE MODULOS       **\n");
+    seq_printf(archivo, "**       BERNALD RENATO PAXTOR PEREN       **\n");
+    seq_printf(archivo, "*********************************************\n");
+    seq_printf(archivo, "*********************************************\n");
     return 0;
 }
 
-//Función para leer archivo con CAT
-static init open_file(struct inode *inode, struct file *file)
+//Funcion que se ejecuta cada vez que se lee el archivo con el comando CAT
+static int al_abrir(struct inode *inode, struct file *file)
 {
-    return single_open(file, write_file, NULL);
+    return single_open(file, escribir_archivo, NULL);
 }
 
-static struct file_operations operaciones = {
-    .open = open_file,
-    .read = seq_read
+//Si el kernel es 5.6 o mayor se usa la estructura proc_ops
+static struct proc_ops operaciones =
+{
+    .proc_open = al_abrir,
+    .proc_read = seq_read
 };
 
-
-/*static struct proc_ops operaciones =
+/*Si el kernel es menor al 5.6 usan file_operations
+static struct file_operations operaciones =
 {
-    .proc_open = open_file,
-    .proc_read = seq_read
+    .open = al_abrir,
+    .read = seq_read
 };
 */
 
-
-//Función que se ejecuta al iniciar el módulo en el kernel (insmod)
-static init _insert(void)
+//Funcion a ejecuta al insertar el modulo en el kernel con insmod
+static int _insert(void)
 {
-    proc_create("201801263", 0,NULL,&operaciones);
-    printk(KERN_INFO "Se insertó módulo! \n");
+    //Creando Modulo en /procs
+    proc_create("memo_201801263", 0, NULL, &operaciones);
+    printk(KERN_INFO "201801263\n");
     return 0;
 }
 
-//Función que se ejecutal al remover módulo (rmod)
+//Funcion a ejecuta al remover el modulo del kernel con rmmod
 static void _remove(void)
 {
-    //remove_proc_entry("Sistemas Operativos 1",NULL);
-    remove_proc_entry("201801263",NULL);
-    printk(KERN_INFO "Se descargó módulo! \n");
+    //Eliminando Módulo en /procks
+    remove_proc_entry("memo_201801263", NULL);
+    printk(KERN_INFO "Sistemas Operativos 1\n");
 }
 
 module_init(_insert);

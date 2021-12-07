@@ -1,0 +1,1 @@
+cmd_/media/audrie8a/Archivos/Sopes1/Lab/Proyecto1/Backend/ModulosKernel/ram/modules.order := {   echo /media/audrie8a/Archivos/Sopes1/Lab/Proyecto1/Backend/ModulosKernel/ram/ram.ko; :; } | awk '!x[$$0]++' - > /media/audrie8a/Archivos/Sopes1/Lab/Proyecto1/Backend/ModulosKernel/ram/modules.order
