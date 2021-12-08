@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -16,6 +18,7 @@ import { FormsModule } from '@angular/forms';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatCardModule} from '@angular/material/card';
 import {MatTabsModule} from '@angular/material/tabs';
+import { PoligonoComponent } from './Components/poligono/poligono.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +26,8 @@ import {MatTabsModule} from '@angular/material/tabs';
     PaginaComponent,
     PrincipalComponent,
     MonitorRamComponent,
-    MonitorCpuComponent
+    MonitorCpuComponent,
+    PoligonoComponent
   ],
   imports: [
     BrowserModule,
@@ -31,6 +35,7 @@ import {MatTabsModule} from '@angular/material/tabs';
     BrowserAnimationsModule,
 
     HttpClientModule,
+    NgxChartsModule,
 
     MatCardModule,
     FormsModule,
