@@ -31,6 +31,7 @@ __used __section("__versions") = {
 	{ 0xc5850110, "printk" },
 	{ 0xfe5d9eb7, "proc_create" },
 	{ 0xb32a092d, "seq_printf" },
+	{ 0x40c7247c, "si_meminfo" },
 	{ 0x72db9365, "single_open" },
 	{ 0xbdfb6dbb, "__fentry__" },
 };
@@ -38,4 +39,4 @@ __used __section("__versions") = {
 MODULE_INFO(depends, "");
 
 
-MODULE_INFO(srcversion, "E9CC729ADA1D3743A6F418C");
+MODULE_INFO(srcversion, "443F6162DAF0A687A10E171");

@@ -12,13 +12,24 @@
 //Para escribir en el Proc
 #include <linux/seq_file.h>
 
+//importar librería sysinfo
+#include <linux/hugetlb.h>
+
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("SOPES1 Proyecto 1, Modulo Ram");
 MODULE_AUTHOR("Audrie Annelisse del Cid Ochoa");
 
+//Estructura que contiene todla la información de sysinfo
+struct sysinfo inf;
 //Funcion que se ejectua cada vez que se lee el archivo con el comando CAT
 static int escribir_archivo(struct seq_file *archivo, void *v)
 {   
+    long memoria_total;
+    long memoria_libre;
+    //Lleno mi estructura con los datos de memoria ram
+    si_meminfo(&inf);
+    memoria_total= inf.totalram*4;
+    memoria_libre= inf.freeram*4;
 
     seq_printf(archivo, "*********************************************\n");
     seq_printf(archivo, "*********************************************\n");
@@ -27,6 +38,10 @@ static int escribir_archivo(struct seq_file *archivo, void *v)
     seq_printf(archivo, "**       BERNALD RENATO PAXTOR PEREN       **\n");
     seq_printf(archivo, "*********************************************\n");
     seq_printf(archivo, "*********************************************\n");
+    seq_printf(archivo, "Memoria Total: %8li MB\n", memoria_total/1024);
+    seq_printf(archivo, "Memoria Libre: %8li MB\n", memoria_libre/1024);
+    seq_printf(archivo, "Memoria Consumida: %8li MB\n", (memoria_total-memoria_libre)/1024);
+    seq_printf(archivo, "Porcentaje de consumo: %8li ", ((memoria_total-memoria_libre)*100)/memoria_total);
     return 0;
 }
 
