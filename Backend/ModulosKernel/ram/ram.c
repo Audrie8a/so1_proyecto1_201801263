@@ -32,10 +32,12 @@ static int escribir_archivo(struct seq_file *archivo, void *v)
     memoria_total= inf.totalram*inf.mem_unit;
     memoria_libre= inf.freeram*inf.mem_unit;
     memoria_consumida= (inf.totalram-inf.freeram)*inf.mem_unit;
-    seq_printf(archivo, "Memoria Total: %8li MB\n", memoria_total/(1024*1024));
-    seq_printf(archivo, "Memoria Libre: %8li MB\n", memoria_libre/(1024*1024));
-    seq_printf(archivo, "Memoria Consumida: %8li MB\n", memoria_consumida/(1024*1024));
-    seq_printf(archivo, "Porcentaje de consumo: %8li ", (memoria_consumida*100)/memoria_total);
+    seq_printf(archivo,"{\n");
+    seq_printf(archivo, "\"Memoria_Total\": \"%8li\", \n", memoria_total/(1024*1024));
+    seq_printf(archivo, "\"Memoria_Libre\": \"%8li\", \n", memoria_libre/(1024*1024));
+    seq_printf(archivo, "\"Memoria_Consumida\": \"%8li\", \n", memoria_consumida/(1024*1024));
+    seq_printf(archivo, "\"Porcentaje_Consumo\": \"%8li\" \n", (memoria_consumida*100)/memoria_total);
+    seq_printf(archivo, "}");
     return 0;
 }
 

@@ -11,7 +11,7 @@ export class MonitorRamComponent implements OnInit {
   datosRam: any;
   totalRam:string="";
   totalLibreRam:string="";
-
+  totalConsumRam: string="";
 
   constructor(
     public _routre:Router,
@@ -25,11 +25,17 @@ export class MonitorRamComponent implements OnInit {
 
   async getDatosRam(){
     let aux = await this.monitorRamService.getDatosRam();
-    alert(aux)
-    console.log(aux);
     if (aux!=null){
-      console.log(aux);
+      let json =JSON.stringify(aux)
+      let obj=JSON.parse(json)
+      this.totalRam=obj.Memoria_Total;
+      this.totalLibreRam=obj.Memoria_Libre;
+      this.totalConsumRam=obj.Memoria_Consumida;
+      console.log(obj);
+    }else{
+      alert("No se obtuvo Respuesta!");
     }
+
   }
 
 }
