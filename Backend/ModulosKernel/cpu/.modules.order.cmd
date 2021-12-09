@@ -1,0 +1,1 @@
+cmd_/media/audrie8a/Archivos/Sopes1/Lab/Proyecto1/Backend/ModulosKernel/cpu/modules.order := {   echo /media/audrie8a/Archivos/Sopes1/Lab/Proyecto1/Backend/ModulosKernel/cpu/cpu.ko; :; } | awk '!x[$$0]++' - > /media/audrie8a/Archivos/Sopes1/Lab/Proyecto1/Backend/ModulosKernel/cpu/modules.order
