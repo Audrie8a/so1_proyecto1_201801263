@@ -7,8 +7,6 @@ import (
 	"log"
 	"net/http"
 
-	socketio "github.com/googollee/go-socket.io"
-
 	"github.com/gorilla/mux"
 )
 
@@ -58,20 +56,6 @@ func (app *App) run() {
 		log.Fatal(err)
 	}
 
-}
-
-func socket() {
-	server, err := socketio.NewServer(nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	server.On("conection", func(so socketio) {
-		log.Println("New Conection")
-	})
-
-	http.Handle("/socket.io", server)
-	log.Fatal(http.ListenAndServe(":5000", nil))
 }
 
 func main() {
