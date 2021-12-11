@@ -11,35 +11,27 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-}
-
-func reader(conn *websocket.Conn) {
-	for {
-		messageType, p, err := conn.ReadMessage()
-		if err != nil {
-			log.Println(err)
-			return
-		}
-		log.Println(string(p))
-
-		if err := conn.WriteMessage(messageType, p); err != nil {
-			log.Println(err)
-			return
-		}
-	}
-}
-
-func wsEndpoint(w http.ResponseWriter, r *http.Request) {
-	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
-	ws, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
+func wsHandler(w http.ResponseWriter, r *http.Request) {
+	conn, err := websocket.Upgrade(w, r, nil, 1024, 1024)
+	if _, ok := err.(websocket.HandshakeError); ok {
+		http.Error(w, "Nota a websocket handshake", 400)
+		return
+	} else if err != nil {
 		log.Println(err)
+		return
 	}
-	log.Println("Client Successfully Connected...")
-	reader(ws)
+
+	defer conn.Close()
+	for {
+		_, msg, err := conn.ReadMessage()
+		if err != nil {
+			return
+		}
+		log.Println(string(msg))
+		if err = conn.WriteMessage(websocket.TextMessage, msg); err != nil {
+			return
+		}
+	}
 }
 
 // App export
@@ -78,7 +70,7 @@ func (app *App) initialiseRoutes() {
 	app.Router = mux.NewRouter()
 	app.Router.HandleFunc("/ram", getRam).Methods(http.MethodGet)
 	app.Router.HandleFunc("/", Inicio)
-	app.Router.HandleFunc("/socket", wsEndpoint)
+	app.Router.HandleFunc("/ws", wsHandler)
 }
 
 func (app *App) run() {

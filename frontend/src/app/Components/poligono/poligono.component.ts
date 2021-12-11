@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute,Router } from '@angular/router';
+import { MonitorRamService } from 'src/app/Services/monitor-ram.service';
 
 @Component({
   selector: 'app-poligono',
@@ -6,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./poligono.component.css']
 })
 export class PoligonoComponent {
+
 
   multi = [
     {
@@ -89,16 +92,21 @@ export class PoligonoComponent {
   yAxisLabel: string = 'Population';
   timeline: boolean = true;
 
-  socket= new WebSocket("ws://localhost:8080/socket")
-
+  socket= new WebSocket("ws://localhost:8080/ws")
+  totalRam:string="";
+  totalLibreRam:string="";
+  totalConsumRam: string="";
 
   colorScheme = {
     domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5']
   };
 
-  constructor() {
+  constructor(public _routre:Router,
+    public route: ActivatedRoute,
+    public monitorRamService: MonitorRamService) {
     //Object.assign(this, { multi });
-    //this.socketFunc()
+    this.socketFunc()
+
   }
 
   onSelect(data: any): void {
@@ -117,6 +125,7 @@ export class PoligonoComponent {
   socketFunc():void{
 
     console.log("Conectado Angular");
+
     this.socket.onopen=()=>{
       console.log("Conexión Exitosa Angular!")
       this.socket.send("Hi from Angular!")
@@ -134,6 +143,21 @@ export class PoligonoComponent {
     this.socket.onmessage = (msg)=>{
       console.log(msg)
     }
+  }
+
+  async getDatosRam(){
+    let aux = await this.monitorRamService.getDatosRam();
+    if (aux!=null){
+      let json =JSON.stringify(aux)
+      let obj=JSON.parse(json)
+      this.totalRam=obj.Memoria_Total;
+      this.totalLibreRam=obj.Memoria_Libre;
+      this.totalConsumRam=obj.Memoria_Consumida;
+      console.log(obj);
+    }else{
+      alert("No se obtuvo Respuesta!");
+    }
+
   }
 
 }

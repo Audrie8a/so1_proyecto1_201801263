@@ -8,7 +8,7 @@ import { MonitorRamService } from 'src/app/Services/monitor-ram.service';
   styleUrls: ['./monitor-ram.component.css']
 })
 export class MonitorRamComponent implements OnInit {
-  datosRam: any;
+
   totalRam:string="";
   totalLibreRam:string="";
   totalConsumRam: string="";
