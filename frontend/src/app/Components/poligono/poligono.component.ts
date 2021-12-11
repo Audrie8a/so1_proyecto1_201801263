@@ -89,12 +89,16 @@ export class PoligonoComponent {
   yAxisLabel: string = 'Population';
   timeline: boolean = true;
 
+  socket= new WebSocket("ws://localhost:8080/socket")
+
+
   colorScheme = {
     domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5']
   };
 
   constructor() {
     //Object.assign(this, { multi });
+    //this.socketFunc()
   }
 
   onSelect(data: any): void {
@@ -105,7 +109,31 @@ export class PoligonoComponent {
     console.log('Activate', JSON.parse(JSON.stringify(data)));
   }
 
+
   onDeactivate(data:any): void {
     console.log('Deactivate', JSON.parse(JSON.stringify(data)));
   }
+
+  socketFunc():void{
+
+    console.log("Conectado Angular");
+    this.socket.onopen=()=>{
+      console.log("Conexión Exitosa Angular!")
+      this.socket.send("Hi from Angular!")
+    }
+
+    this.socket.onclose=(event)=>{
+      console.log("Conexión Socket Angular Cerrada: ",event)
+    }
+
+    this.socket.onerror=(error)=>{
+      console.log("Ocurrio un Error, Socket Angular: ",error)
+
+    }
+
+    this.socket.onmessage = (msg)=>{
+      console.log(msg)
+    }
+  }
+
 }
