@@ -21,6 +21,20 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	out, err := ioutil.ReadFile("/proc/memo_201801263")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	output := string(out[:])
+
+	mensaje := []byte(output)
+	err = conn.WriteMessage(websocket.TextMessage, mensaje)
+	if err != nil {
+		log.Println("Error al enviar mensaje!")
+		log.Println(err)
+	}
+
 	defer conn.Close()
 	for {
 		_, msg, err := conn.ReadMessage()

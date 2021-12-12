@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute,Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import {formatDate } from '@angular/common';
 import { MonitorRamService } from 'src/app/Services/monitor-ram.service';
 
 @Component({
@@ -7,77 +9,10 @@ import { MonitorRamService } from 'src/app/Services/monitor-ram.service';
   templateUrl: './poligono.component.html',
   styleUrls: ['./poligono.component.css']
 })
-export class PoligonoComponent {
+export class PoligonoComponent implements OnInit{
 
-
-  multi = [
-    {
-      "name": "Germany",
-      "series": [
-        {
-          "name": "1990",
-          "value": 62000000
-        },
-        {
-          "name": "2010",
-          "value": 73000000
-        },
-        {
-          "name": "2011",
-          "value": 89400000
-        }
-      ]
-    },
-
-    {
-      "name": "USA",
-      "series": [
-        {
-          "name": "1990",
-          "value": 250000000
-        },
-        {
-          "name": "2010",
-          "value": 309000000
-        },
-        {
-          "name": "2011",
-          "value": 311000000
-        }
-      ]
-    },
-
-    {
-      "name": "France",
-      "series": [
-        {
-          "name": "1990",
-          "value": 58000000
-        },
-        {
-          "name": "2010",
-          "value": 50000020
-        },
-        {
-          "name": "2011",
-          "value": 58000000
-        }
-      ]
-    },
-    {
-      "name": "UK",
-      "series": [
-        {
-          "name": "1990",
-          "value": 57000000
-        },
-        {
-          "name": "2010",
-          "value": 62000000
-        }
-      ]
-    }
-  ];
+  private intervalUpdate: any = null;
+  listaGrafica: any;
   view: [number,number] = [700, 300];
 
   // options
@@ -88,8 +23,8 @@ export class PoligonoComponent {
   yAxis: boolean = true;
   showYAxisLabel: boolean = true;
   showXAxisLabel: boolean = true;
-  xAxisLabel: string = 'Year';
-  yAxisLabel: string = 'Population';
+  xAxisLabel: string = 'Tiempo';
+  yAxisLabel: string = 'Total_Ram';
   timeline: boolean = true;
 
   socket= new WebSocket("ws://localhost:8080/ws")
@@ -104,9 +39,16 @@ export class PoligonoComponent {
   constructor(public _routre:Router,
     public route: ActivatedRoute,
     public monitorRamService: MonitorRamService) {
-    //Object.assign(this, { multi });
-    this.socketFunc()
 
+
+  }
+
+  ngOnInit(): void {
+    this.getDatosRam()//this.socketFunc();
+
+		this.intervalUpdate = setInterval(() =>{
+			this.getDatosRam()//this.socketFunc();
+		},5000);
   }
 
   onSelect(data: any): void {
@@ -122,7 +64,48 @@ export class PoligonoComponent {
     console.log('Deactivate', JSON.parse(JSON.stringify(data)));
   }
 
-  socketFunc():void{
+
+  async getDatosRam(){
+    let aux = await this.monitorRamService.getDatosRam();
+    if (aux!=null){
+      let json =JSON.stringify(aux)
+      let obj=JSON.parse(json)
+
+      let today= new Date();
+      let jstoday = formatDate(today, 'hh:mm:ss a', 'en-US', '+0502');
+      let listaGrafica=[
+        {
+          "name": "Total_Ram",
+          "series":[
+            {
+              "name": jstoday,
+              "value": obj.Memoria_Consumida
+            }
+
+          ]
+        }
+      ]
+      Object.assign(this, { listaGrafica });
+      this.totalRam=obj.Memoria_Total;
+      this.totalLibreRam=obj.Memoria_Libre;
+      this.totalConsumRam=obj.Memoria_Consumida;
+      console.log(obj);
+    }else{
+      alert("No se obtuvo Respuesta!");
+    }
+
+  }
+
+
+}
+
+
+
+
+
+/*
+
+private socketFunc():void{
 
     console.log("Conectado Angular");
 
@@ -141,23 +124,33 @@ export class PoligonoComponent {
     }
 
     this.socket.onmessage = (msg)=>{
-      console.log(msg)
-    }
-  }
+      let obj=JSON.parse(msg.data)
+      let today= new Date();
+      let jstoday = formatDate(today, 'hh:mm:ss a', 'en-US', '+0530');
+      let listaGrafica=[
+        {
+          "name": "Total_Ram",
+          "series":[
+            {
+              "name": jstoday,
+              "value": obj.Memoria_Consumida
+            }
 
-  async getDatosRam(){
-    let aux = await this.monitorRamService.getDatosRam();
-    if (aux!=null){
-      let json =JSON.stringify(aux)
-      let obj=JSON.parse(json)
+          ]
+        }
+      ]
+
+      Object.assign(this, { listaGrafica });
       this.totalRam=obj.Memoria_Total;
       this.totalLibreRam=obj.Memoria_Libre;
       this.totalConsumRam=obj.Memoria_Consumida;
-      console.log(obj);
-    }else{
-      alert("No se obtuvo Respuesta!");
+      console.log(msg)
     }
+
+
+
 
   }
 
-}
+
+ */
