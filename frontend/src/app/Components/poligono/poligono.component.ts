@@ -4,16 +4,36 @@ import { Observable } from 'rxjs';
 import {formatDate } from '@angular/common';
 import { MonitorRamService } from 'src/app/Services/monitor-ram.service';
 
+interface RamTotal{
+  name: String;
+  value: String;
+}
+
+
 @Component({
   selector: 'app-poligono',
   templateUrl: './poligono.component.html',
   styleUrls: ['./poligono.component.css']
 })
 export class PoligonoComponent implements OnInit{
+  listaAuxiliar=[
+    {
+      "name": "Total_Ram",
+      "series":[
+        {
+          "name": '0',
+          "value": '0'
+        }
 
-  private intervalUpdate: any = null;
+      ]
+    }
+  ]
+
   listaGrafica: any;
-  view: [number,number] = [700, 300];
+  private intervalUpdate: any = null;
+
+
+  view: [number,number] = [1000, 500];
 
   // options
   legend: boolean = true;
@@ -26,6 +46,7 @@ export class PoligonoComponent implements OnInit{
   xAxisLabel: string = 'Tiempo';
   yAxisLabel: string = 'Total_Ram';
   timeline: boolean = true;
+  maxXAxisTickLength=true
 
   socket= new WebSocket("ws://localhost:8080/ws")
   totalRam:string="";
@@ -39,11 +60,11 @@ export class PoligonoComponent implements OnInit{
   constructor(public _routre:Router,
     public route: ActivatedRoute,
     public monitorRamService: MonitorRamService) {
-
-
+      Object.assign(this,this.listaGrafica);
   }
 
   ngOnInit(): void {
+
     this.getDatosRam()//this.socketFunc();
 
 		this.intervalUpdate = setInterval(() =>{
@@ -72,8 +93,17 @@ export class PoligonoComponent implements OnInit{
       let obj=JSON.parse(json)
 
       let today= new Date();
-      let jstoday = formatDate(today, 'hh:mm:ss a', 'en-US', '+0502');
-      let listaGrafica=[
+      let jstoday = formatDate(today, 'hh:mm:ss ', 'en-US', '+0502');
+
+      let auxDato={
+        name: jstoday,
+        value: obj.Memoria_Consumida
+      }
+      //(",{ \"name\": "+String(jstoday)+",\n \"value\": "+String(obj.Memoria_Consumida)+"}]")
+
+
+      this.listaAuxiliar[0].series.push(auxDato)
+      this.listaGrafica=[
         {
           "name": "Total_Ram",
           "series":[
@@ -85,11 +115,15 @@ export class PoligonoComponent implements OnInit{
           ]
         }
       ]
-      Object.assign(this, { listaGrafica });
+      this.listaGrafica=this.listaAuxiliar;
+
+      console.log(this.listaGrafica)
+
+      this.listaGrafica=[...this.listaGrafica]
       this.totalRam=obj.Memoria_Total;
       this.totalLibreRam=obj.Memoria_Libre;
       this.totalConsumRam=obj.Memoria_Consumida;
-      console.log(obj);
+
     }else{
       alert("No se obtuvo Respuesta!");
     }
