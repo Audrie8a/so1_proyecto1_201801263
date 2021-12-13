@@ -6,6 +6,9 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os/exec"
+	"strconv"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
@@ -69,6 +72,36 @@ func getRam(w http.ResponseWriter, r *http.Request) {
 	//fmt.Fprintf(w, output)
 }
 
+func getCPU(w http.ResponseWriter, r *http.Request) {
+	//cmd := exec.Command("sudo ps -eo pcpu | sort -k 1 -r | head -50")
+	cmd := exec.Command("sh", "-c", "ps -eo pcpu | sort -k 1 -r | head -50")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	output := string(out[:])
+	salida := strings.Split(output, " ")
+
+	var response map[string]interface{}
+	total := 0.0
+	respuesta := ""
+	for i := 1; i < len(salida); i++ {
+		entrada := strings.Trim(salida[i], "\n")
+		aux, err := strconv.ParseFloat(entrada, 32)
+		if err != nil {
+			respuesta = "{\"CPU\": \"Error\"}"
+		} else {
+			total += aux
+			respuesta = "{\"CPU\":" + fmt.Sprintf("%f", total) + "}"
+		}
+
+	}
+
+	json.Unmarshal([]byte(respuesta), &response)
+	respondWithJSON(w, http.StatusOK, response)
+}
+
 func Inicio(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "Bienvenidos!")
 	fmt.Println(r)
@@ -85,6 +118,7 @@ func (app *App) initialiseRoutes() {
 	app.Router.HandleFunc("/ram", getRam).Methods(http.MethodGet)
 	app.Router.HandleFunc("/", Inicio)
 	app.Router.HandleFunc("/ws", wsHandler)
+	app.Router.HandleFunc("/cpu", getCPU).Methods(http.MethodGet)
 }
 
 func (app *App) run() {

@@ -4,10 +4,7 @@ import { Observable } from 'rxjs';
 import {formatDate } from '@angular/common';
 import { MonitorRamService } from 'src/app/Services/monitor-ram.service';
 
-interface RamTotal{
-  name: String;
-  value: String;
-}
+
 
 
 @Component({
@@ -44,7 +41,7 @@ export class PoligonoComponent implements OnInit{
   showYAxisLabel: boolean = true;
   showXAxisLabel: boolean = true;
   xAxisLabel: string = 'Tiempo';
-  yAxisLabel: string = 'Total_Ram';
+  yAxisLabel: string = 'Total_Ram (MB)';
   timeline: boolean = true;
   maxXAxisTickLength=true
 
@@ -52,6 +49,7 @@ export class PoligonoComponent implements OnInit{
   totalRam:string="";
   totalLibreRam:string="";
   totalConsumRam: string="";
+  porcentajeConsumoRam: string="";
 
   colorScheme = {
     domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5']
@@ -109,7 +107,7 @@ export class PoligonoComponent implements OnInit{
           "series":[
             {
               "name": jstoday,
-              "value": obj.Memoria_Consumida
+              "value": obj.Porcentaje_Consumo
             }
 
           ]
@@ -123,6 +121,7 @@ export class PoligonoComponent implements OnInit{
       this.totalRam=obj.Memoria_Total;
       this.totalLibreRam=obj.Memoria_Libre;
       this.totalConsumRam=obj.Memoria_Consumida;
+      this.porcentajeConsumoRam=obj.Porcentaje_Consumo;
 
     }else{
       alert("No se obtuvo Respuesta!");
