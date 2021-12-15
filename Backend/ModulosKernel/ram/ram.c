@@ -40,14 +40,15 @@ static int escribir_archivo(struct seq_file *archivo, void *v)
 
     porcentaje= (((memoria_consumida/(1024*1024))+440)/(memoria_total/(1024*1024)))*100;
     
-    seq_printf(archivo,"{\n");
-    seq_printf(archivo, "\"Memoria_Total\": \"%8li\", \n", memoria_total/(1024*1024));
-    seq_printf(archivo, "\"Memoria_Libre\": \"%8li\", \n", memoria_libre/(1024*1024));
-    seq_printf(archivo, "\"Memoria_cache\": \"%8li\", \n", (memoria_cache/(1024*1024))-400);
-    seq_printf(archivo, "\"Memoria_Compartida\": \"%8li\", \n", memoria_compartida/(1024*1024));
-    seq_printf(archivo, "\"Memoria_Consumida\": \"%8li\", \n", (memoria_consumida/(1024*1024))+440);
-    seq_printf(archivo, "\"Porcentaje_Consumo\": \"%8li\" \n",(((memoria_consumida/(1024*1024))+440)*100)/(memoria_total/(1024*1024)));
-    seq_printf(archivo, "}");
+    // seq_printf(archivo,"{\n");
+    // seq_printf(archivo, "\"Memoria_Total\": \"%8li\", \n", memoria_total/(1024*1024));
+    // seq_printf(archivo, "\"Memoria_Libre\": \"%8li\", \n", memoria_libre/(1024*1024));
+    // seq_printf(archivo, "\"Memoria_cache\": \"%8li\", \n", (memoria_cache/(1024*1024))-400);
+    // seq_printf(archivo, "\"Memoria_Compartida\": \"%8li\" \n", memoria_compartida/(1024*1024));
+    // seq_printf(archivo, "}");
+    
+    seq_printf(archivo, "%8li ", memoria_total/(1024*1024));
+    seq_printf(archivo, " %8li \n", memoria_libre/(1024*1024));
     return 0;
 }
 

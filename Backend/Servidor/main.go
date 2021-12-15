@@ -63,6 +63,28 @@ func getRam(w http.ResponseWriter, r *http.Request) {
 	}
 
 	output := string(out[:])
+
+	cmd := exec.Command("sh", "-c", "free -m | head -2 | tail -1 | awk '{print $6}'")
+	cacheJSON, errorRam := cmd.CombinedOutput()
+	if errorRam != nil {
+		log.Fatal(errorRam)
+	}
+
+	cache := string(cacheJSON[:])
+	cache = strings.Trim(cache, "\n")
+
+	salida := strings.Split(output, " ")
+	RamTotal, err := strconv.Atoi(salida[4])
+	RamLibre, err := strconv.Atoi(salida[11])
+	RamCache, err := strconv.Atoi(cache)
+
+	RamConsumida := RamTotal - (RamLibre + RamCache)
+	PorcentajeRam := (RamConsumida * 100) / RamTotal
+	Memoria_Consumida := "\"Memoria_Consumida\": \"" + strconv.Itoa(RamConsumida) + "\",\n "
+	Porcentaje_Consumo := "\"Porcentaje_Consumo\": \"" + strconv.Itoa(PorcentajeRam) + "\"\n "
+	salida[3] = "\"Memoria_cache\": \"" + cache + "\", "
+
+	output = "{\n \"Memoria_Total\": \"" + strconv.Itoa(RamTotal) + "\",\n \"Memoria_Libre\": \"" + strconv.Itoa(RamLibre) + "\",\n" + Memoria_Consumida + Porcentaje_Consumo + "}"
 	var response map[string]interface{}
 	//json.Unmarshal([]byte(`{"hello": 8}`), &response)
 	json.Unmarshal([]byte(output), &response)
@@ -70,6 +92,27 @@ func getRam(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, response)
 	//fmt.Print(output)
 	//fmt.Fprintf(w, output)
+}
+
+func killProces(w http.ResponseWriter, r *http.Request) {
+	keys, ok := r.URL.Query()["PID"]
+	if ok {
+
+		cmd := exec.Command("sh", "-c", "kill "+keys[0])
+		out, err := cmd.CombinedOutput()
+		var response map[string]interface{}
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		output := string(out[:])
+		json.Unmarshal([]byte(output), &response)
+		respondWithJSON(w, http.StatusOK, response)
+
+	}
+
+	//out, err := cmd.CombinedOutput()
+
 }
 
 func getCPU(w http.ResponseWriter, r *http.Request) {
@@ -113,6 +156,7 @@ func getProcesos(w http.ResponseWriter, r *http.Request) {
 	ininterruptible := 0 //2
 	zombie := 0          //4
 	detenido := 0        //8
+	sleep := 0           //1026
 	respuesta := "\"procesos\": [\n "
 	output := string(out[:])
 	salida := strings.Split(output, "~")
@@ -121,15 +165,31 @@ func getProcesos(w http.ResponseWriter, r *http.Request) {
 	total_procesos := len(salida) - 1
 
 	for i := 0; i < len(salida)-1; i++ {
-		respuesta += "{" + salida[i] + ","
 
 		estado := strings.Split(salida[i], ",")
 		fmt.Println(string(estado[5][13]))
-		//Clasificacion Estados
+		fmt.Println(string(estado[5][14]))
 
+		idUsuarioSplit := strings.Split(estado[2], ":")
+		idUsuario := strings.Trim(idUsuarioSplit[1], "\"")
+		idUsuario = strings.Trim(idUsuario, " \"")
+		//Obtener Usuario por id
+		usrCmd := exec.Command("sh", "-c", "getent passwd "+idUsuario+" | cut -d: -f1")
+		Usuario, errUsr := usrCmd.CombinedOutput()
+		if errUsr != nil {
+			log.Fatal(errUsr)
+		}
+		UsrString := string(Usuario[:])
+
+		UsuarioJSON := "\n \"Usuario\": \"" + strings.Trim(UsrString, "\n") + "\""
+
+		salida[i] = estado[0] + "," + estado[1] + "," + UsuarioJSON + "," + estado[3] + "," + estado[4] + "," + estado[5]
+
+		respuesta += "{" + salida[i] + ","
+		//Clasificacion Estados
 		if string(estado[5][13]) == "0" {
 			ejecucion++
-		} else if string(estado[5][13]) == "1" {
+		} else if string(estado[5][13]) == "1" && string(estado[5][14]) != "0" {
 
 			interruptible++
 		} else if string(estado[5][13]) == "2" {
@@ -138,6 +198,8 @@ func getProcesos(w http.ResponseWriter, r *http.Request) {
 			zombie++
 		} else if string(estado[5][13]) == "8" {
 			detenido++
+		} else if string(estado[5][13]) == "1" && string(estado[5][14]) == "0" {
+			sleep++
 		}
 
 		respuesta += "\n \"hijos\": [ \n "
@@ -177,6 +239,7 @@ func getProcesos(w http.ResponseWriter, r *http.Request) {
 	respuesta += "\"Ininterrumpible\": \"" + strconv.Itoa(ininterruptible) + "\",\n"
 	respuesta += "\"Zombie\": \"" + strconv.Itoa(zombie) + "\",\n"
 	respuesta += "\"Detenidos\": \"" + strconv.Itoa(detenido) + "\",\n"
+	respuesta += "\"Sleep\": \"" + strconv.Itoa(sleep) + "\", \n"
 	respuesta += "\"Total_Procesos\": \"" + strconv.Itoa(total_procesos) + "\",\n"
 	respuesta += auxProcesos
 	//respuesta2 := "{\"hello\": 8}"
@@ -206,6 +269,7 @@ func (app *App) initialiseRoutes() {
 	app.Router.HandleFunc("/ws", wsHandler)
 	app.Router.HandleFunc("/cpu", getCPU).Methods(http.MethodGet)
 	app.Router.HandleFunc("/procesos", getProcesos).Methods(http.MethodGet)
+	app.Router.HandleFunc("/kill/", killProces)
 }
 
 func (app *App) run() {

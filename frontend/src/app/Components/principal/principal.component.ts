@@ -16,6 +16,7 @@ export class PrincipalComponent implements OnInit {
 	zombie :string=""
 	detenido :string=""
   total_procesos:string=""
+  sleep:string=""
   Procesos: any
   panelOpenState = false;
   constructor(public _routre:Router,
@@ -36,6 +37,7 @@ export class PrincipalComponent implements OnInit {
       this.ininterruptible=obj.Ininterrumpible
       this.zombie=obj.Zombie
       this.detenido=obj.Detenidos
+      this.sleep=obj.Sleep
       this.total_procesos=obj.Total_Procesos
       this.Procesos=obj.procesos
 
@@ -43,5 +45,14 @@ export class PrincipalComponent implements OnInit {
       console.log(obj)
 
     }
+  }
+
+
+  async killProceso(PID:string){
+    let aux =await this.principalService.killProceso(PID)
+    window.location.reload();
+
+
+
   }
 }

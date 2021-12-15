@@ -14,7 +14,7 @@ export class MonitorCpuComponent implements OnInit {
 
   listaAuxiliar=[
     {
-      "name": "Total_Ram",
+      "name": "%CPU",
       "series":[
         {
           "name": '0',
@@ -40,7 +40,7 @@ export class MonitorCpuComponent implements OnInit {
   showYAxisLabel: boolean = true;
   showXAxisLabel: boolean = true;
   xAxisLabel: string = 'Tiempo';
-  yAxisLabel: string = 'Total_Ram (MB)';
+  yAxisLabel: string = '%CPU (MB)';
   timeline: boolean = true;
   maxXAxisTickLength=true
 
@@ -95,7 +95,7 @@ export class MonitorCpuComponent implements OnInit {
       this.listaAuxiliar[0].series.push(auxDato)
       this.listaGrafica=[
         {
-          "name": "Total_Ram",
+          "name": "%CPU",
           "series":[
             {
               "name": jstoday,

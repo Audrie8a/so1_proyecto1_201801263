@@ -1,19 +1,101 @@
 <div class="Contenedor">
-  <div class="Tabla"></div>
+
+  <div class="Tabla">
+    <table class="tg">
+      <thead>
+        <tr>
+          <th class="tg-bzci" colspan="2"><span style="font-weight:bold">Estados Procesos: {{total_procesos}}</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="tg-0lax"><span style="font-weight:bold">Ejecucion :</span></td>
+          <td class="tg-0lax">{{ejecucion}}</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax"><span style="font-weight:bold">Interrumpible :</span></td>
+          <td class="tg-0lax">{{interruptible}}</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax"><span style="font-weight:bold">Ininterruptible :</span></td>
+          <td class="tg-0lax">{{ininterruptible}}</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax"><span style="font-weight:bold">Zombie :</span></td>
+          <td class="tg-0lax">{{zombie}}</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax"><span style="font-weight:bold">Detenido :</span></td>
+          <td class="tg-0lax">{{detenido}}</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax"><span style="font-weight:bold">Sleep :</span></td>
+          <td class="tg-0lax">{{sleep}}</td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
   <div class="Arbol">
+    <button (click)="getProcesos()">Actualizar</button>
     <mat-accordion *ngFor="let proceso of Procesos">
       <mat-expansion-panel  (opened)="panelOpenState = true"
                            (closed)="panelOpenState = false">
         <mat-expansion-panel-header>
           <mat-panel-title>
             {{proceso.Proceso}}
+
           </mat-panel-title>
           <mat-panel-description>
-            Currently I am {{panelOpenState ? 'open' : 'closed'}}
+            PID: {{proceso.PID}}
           </mat-panel-description>
         </mat-expansion-panel-header>
-        <p>I'm visible because I am open</p>
+        <p>Usuario: {{proceso.Usuario}}</p>
+        <p>Ram: {{(proceso.RamB/proceso.Memoria_TotalM)*100}}%        </p>
+        <p>Estado: {{proceso.Estado}}</p>
+
+        <mat-accordion>
+          <mat-expansion-panel  (opened)="panelOpenState = true"
+                               (closed)="panelOpenState = false">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Hijos
+              </mat-panel-title>
+              <mat-panel-description>
+                Hijos del proceso
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <mat-accordion *ngFor="let procesoHijo of proceso.hijos">
+              <mat-expansion-panel  (opened)="panelOpenState = true"
+                                   (closed)="panelOpenState = false">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    {{procesoHijo.Proceso_Hijo}}
+                  </mat-panel-title>
+                  <mat-panel-description>
+                    PID: {{procesoHijo.PID}}
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+                <p>Usuario: {{procesoHijo.Usuario}}</p>
+                <p>Ram: {{(procesoHijo.RamB/proceso.Memoria_TotalM)*100}}%        </p>
+                <p>Estado: {{procesoHijo.Estado}}</p>
+              </mat-expansion-panel>
+          </mat-accordion>
+
+          </mat-expansion-panel>
+
+          <mat-action-row>
+            <button mat-button color="warn" (click)="killProceso(proceso.PID)">Kill</button>
+          </mat-action-row>
+
+        </mat-accordion>
+
+
+
       </mat-expansion-panel>
+
     </mat-accordion>
   </div>
 </div>

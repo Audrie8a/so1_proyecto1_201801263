@@ -12,4 +12,10 @@ export class PrincipalService {
     const ruta=this.url+"procesos";
     return this.httpClient.get(ruta).toPromise();
   }
+
+  killProceso(PID: string){
+    alert("Matando proceso PID: "+PID)
+    const ruta=this.url+"kill/"+"?PID="+PID;
+    return this.httpClient.get(ruta).toPromise();
+  }
 }
