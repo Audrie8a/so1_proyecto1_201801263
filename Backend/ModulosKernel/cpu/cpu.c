@@ -16,6 +16,8 @@
 #include <linux/hugetlb.h>
 #include <linux/sched.h>
 
+#include <linux/mm.h>           // get_mm_rss()
+
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("SOPES1 Proyecto 1, Modulo Ram");
 MODULE_AUTHOR("Audrie Annelisse del Cid Ochoa");
@@ -25,15 +27,35 @@ struct task_struct *proceso, *proceso_hijo;
 //Estructura que contiene la información de los nodos del arbol
 struct list_head *hijos;
 
+//Estructura que contiene todla la información de sysinfo
+struct sysinfo inf;
+
 //Funcion que se ejectua cada vez que se lee el archivo con el comando CAT
 static int escribir_archivo(struct seq_file *archivo, void *v)
 {   
+    unsigned long memoria_total;
+    // unsigned long memoria_proceso;
+    // unsigned long porcentaje_memoria;
+    unsigned long rss;
+
+    si_meminfo(&inf);
+    memoria_total= (inf.totalram*inf.mem_unit)/(1024*1024);
     //Obtener el listado de procesos en ejecución
     for_each_process(proceso){
-        seq_printf(archivo, "Proceso %s (PID: %d )\n",proceso->comm, proceso->pid);
+        
+
+        if (proceso->mm){
+            rss=get_mm_rss(proceso->mm);
+        }
+        seq_printf(archivo, "\"Proceso\": \"%s\",\n \"PID\": \"%d\",\n \"Usuario\": \"%d\",\n \"RamB\": \"%8li\",\n \"Memoria_TotalM\": \"%8li\",\n \"Estado\": \"%ld\"  ~",proceso->comm, proceso->pid, __kuid_val(proceso->real_cred->uid),rss, memoria_total, proceso->state);  
         list_for_each(hijos, &(proceso->children)){
+
+
             proceso_hijo=list_entry(hijos, struct task_struct, sibling);
-            seq_printf(archivo, "\t Proceso hijo %s (PID: %d)\n",proceso_hijo->comm, proceso_hijo->pid);
+            if (proceso_hijo->mm){
+            rss=get_mm_rss(proceso_hijo->mm);
+        }
+            seq_printf(archivo, "\t\"Proceso_Hijo\": \"%s\",\n \"PID\": \"%d\",\n \"Usuario\": \"%d\",\n \"RamB\": \"%8li\",\n \"Estado\": \"%ld\"\n ~",proceso_hijo->comm, proceso_hijo->pid, __kuid_val(proceso_hijo->real_cred->uid),rss, proceso_hijo->state);
         }
     }
 

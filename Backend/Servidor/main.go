@@ -102,6 +102,92 @@ func getCPU(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, response)
 }
 
+func getProcesos(w http.ResponseWriter, r *http.Request) {
+	cmd := exec.Command("sh", "-c", "cat /proc/cpu_201801263")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatal(err)
+	}
+	ejecucion := 0       //0
+	interruptible := 0   //1
+	ininterruptible := 0 //2
+	zombie := 0          //4
+	detenido := 0        //8
+	respuesta := "\"procesos\": [\n "
+	output := string(out[:])
+	salida := strings.Split(output, "~")
+	var response map[string]interface{}
+
+	total_procesos := len(salida) - 1
+
+	for i := 0; i < len(salida)-1; i++ {
+		respuesta += "{" + salida[i] + ","
+
+		estado := strings.Split(salida[i], ",")
+		fmt.Println(string(estado[5][13]))
+		//Clasificacion Estados
+
+		if string(estado[5][13]) == "0" {
+			ejecucion++
+		} else if string(estado[5][13]) == "1" {
+
+			interruptible++
+		} else if string(estado[5][13]) == "2" {
+			ininterruptible++
+		} else if string(estado[5][13]) == "4" {
+			zombie++
+		} else if string(estado[5][13]) == "8" {
+			detenido++
+		}
+
+		respuesta += "\n \"hijos\": [ \n "
+		//Verificar si tiene hijos
+		if (i+1) < len(salida)-1 && salida[i+1][0] == '\t' {
+			fmt.Println("Tiene Hijo")
+
+			for j := i + 1; j < len(salida)-1; j++ {
+
+				respuesta += "{" + strings.Split(salida[j], "/t")[0] + "}"
+				i++
+
+				if (i+1) < len(salida)-1 && salida[i+1][0] == '\t' {
+					respuesta += ",\n"
+				} else {
+
+					break
+				}
+
+			}
+
+		} else {
+			fmt.Println("Es otro proceso")
+
+		}
+
+		respuesta += "]\n}"
+
+		if i+1 < len(salida)-1 {
+			respuesta += ",\n"
+		}
+	}
+	respuesta += "]}"
+	auxProcesos := respuesta
+	respuesta = "{ \"Ejecucion\": \"" + strconv.Itoa(ejecucion) + "\",\n"
+	respuesta += "\"Interrumpible\": \"" + strconv.Itoa(interruptible) + "\",\n"
+	respuesta += "\"Ininterrumpible\": \"" + strconv.Itoa(ininterruptible) + "\",\n"
+	respuesta += "\"Zombie\": \"" + strconv.Itoa(zombie) + "\",\n"
+	respuesta += "\"Detenidos\": \"" + strconv.Itoa(detenido) + "\",\n"
+	respuesta += "\"Total_Procesos\": \"" + strconv.Itoa(total_procesos) + "\",\n"
+	respuesta += auxProcesos
+	//respuesta2 := "{\"hello\": 8}"
+	// fmt.Println(respuesta)
+	// w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+	// w.WriteHeader(http.StatusOK)
+	// fmt.Fprint(w, respuesta)
+	json.Unmarshal([]byte(respuesta), &response)
+	respondWithJSON(w, http.StatusOK, response)
+}
+
 func Inicio(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "Bienvenidos!")
 	fmt.Println(r)
@@ -119,6 +205,7 @@ func (app *App) initialiseRoutes() {
 	app.Router.HandleFunc("/", Inicio)
 	app.Router.HandleFunc("/ws", wsHandler)
 	app.Router.HandleFunc("/cpu", getCPU).Methods(http.MethodGet)
+	app.Router.HandleFunc("/procesos", getProcesos).Methods(http.MethodGet)
 }
 
 func (app *App) run() {

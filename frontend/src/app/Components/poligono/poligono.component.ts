@@ -95,7 +95,7 @@ export class PoligonoComponent implements OnInit{
 
       let auxDato={
         name: jstoday,
-        value: obj.Memoria_Consumida
+        value: obj.Porcentaje_Consumo
       }
       //(",{ \"name\": "+String(jstoday)+",\n \"value\": "+String(obj.Memoria_Consumida)+"}]")
 

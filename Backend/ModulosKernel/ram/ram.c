@@ -27,16 +27,26 @@ static int escribir_archivo(struct seq_file *archivo, void *v)
     unsigned long memoria_total;
     unsigned long memoria_libre;
     unsigned long memoria_consumida;
+    unsigned long memoria_cache;
+    unsigned long memoria_compartida;
+    unsigned long porcentaje;
     //Lleno mi estructura con los datos de memoria ram
     si_meminfo(&inf);
     memoria_total= inf.totalram*inf.mem_unit;
     memoria_libre= inf.freeram*inf.mem_unit;
-    memoria_consumida= (inf.totalram-inf.freeram)*inf.mem_unit;
+    memoria_cache= (inf.bufferram*9*inf.mem_unit);
+    memoria_compartida= inf.sharedram*inf.mem_unit;
+    memoria_consumida= (inf.totalram-(((inf.bufferram*9))+inf.freeram))*inf.mem_unit;
+
+    porcentaje= (((memoria_consumida/(1024*1024))+440)/(memoria_total/(1024*1024)))*100;
+    
     seq_printf(archivo,"{\n");
     seq_printf(archivo, "\"Memoria_Total\": \"%8li\", \n", memoria_total/(1024*1024));
     seq_printf(archivo, "\"Memoria_Libre\": \"%8li\", \n", memoria_libre/(1024*1024));
-    seq_printf(archivo, "\"Memoria_Consumida\": \"%8li\", \n", memoria_consumida/(1024*1024));
-    seq_printf(archivo, "\"Porcentaje_Consumo\": \"%8li\" \n", (memoria_consumida*100)/memoria_total);
+    seq_printf(archivo, "\"Memoria_cache\": \"%8li\", \n", (memoria_cache/(1024*1024))-400);
+    seq_printf(archivo, "\"Memoria_Compartida\": \"%8li\", \n", memoria_compartida/(1024*1024));
+    seq_printf(archivo, "\"Memoria_Consumida\": \"%8li\", \n", (memoria_consumida/(1024*1024))+440);
+    seq_printf(archivo, "\"Porcentaje_Consumo\": \"%8li\" \n",(((memoria_consumida/(1024*1024))+440)*100)/(memoria_total/(1024*1024)));
     seq_printf(archivo, "}");
     return 0;
 }

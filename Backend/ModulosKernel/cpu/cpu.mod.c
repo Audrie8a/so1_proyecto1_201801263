@@ -32,6 +32,7 @@ __used __section("__versions") = {
 	{ 0xfe5d9eb7, "proc_create" },
 	{ 0xb32a092d, "seq_printf" },
 	{ 0x6d289335, "init_task" },
+	{ 0x40c7247c, "si_meminfo" },
 	{ 0x72db9365, "single_open" },
 	{ 0xbdfb6dbb, "__fentry__" },
 };
@@ -39,4 +40,4 @@ __used __section("__versions") = {
 MODULE_INFO(depends, "");
 
 
-MODULE_INFO(srcversion, "BB0B9DDC998C4C2C89EC462");
+MODULE_INFO(srcversion, "52CCA4B9C846716208BBC15");
