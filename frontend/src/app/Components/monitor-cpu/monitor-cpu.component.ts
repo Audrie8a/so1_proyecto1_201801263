@@ -11,6 +11,7 @@ import {formatDate } from '@angular/common';
 export class MonitorCpuComponent implements OnInit {
 
   Utilizacion_CPU: string=""
+  Utilizacion_CPU_TOP: string=""
 
   listaAuxiliar=[
     {
@@ -21,6 +22,15 @@ export class MonitorCpuComponent implements OnInit {
           "value": '0'
         }
 
+      ]
+    },
+    {
+      "name": "%CPU_Top",
+      "series":[
+        {
+          "name": '0',
+          "value": '0'
+        }
       ]
     }
   ]
@@ -93,6 +103,11 @@ export class MonitorCpuComponent implements OnInit {
       }
 
       this.listaAuxiliar[0].series.push(auxDato)
+      auxDato={
+        name: jstoday,
+        value: obj.CPU_TOP
+      }
+      this.listaAuxiliar[1].series.push(auxDato)
       this.listaGrafica=[
         {
           "name": "%CPU",
@@ -103,6 +118,15 @@ export class MonitorCpuComponent implements OnInit {
             }
 
           ]
+        },
+        {
+          "name": "%CPU_Top",
+          "series":[
+            {
+              "name": jstoday,
+              "value": obj.CPU_TOP
+            }
+          ]
         }
       ]
       this.listaGrafica=this.listaAuxiliar;
@@ -111,6 +135,7 @@ export class MonitorCpuComponent implements OnInit {
       this.listaGrafica=[...this.listaGrafica]
 
       this.Utilizacion_CPU=obj.CPU
+      this.Utilizacion_CPU_TOP=obj.CPU_TOP
     }else{
       alert("No se obtuvo Respuesta!");
     }

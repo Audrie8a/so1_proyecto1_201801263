@@ -136,10 +136,20 @@ func getCPU(w http.ResponseWriter, r *http.Request) {
 			respuesta = "{\"CPU\": \"Error\"}"
 		} else {
 			total += aux
-			respuesta = "{\"CPU\":" + fmt.Sprintf("%f", total) + "}"
+			respuesta = "{\"CPU\":" + fmt.Sprintf("%f", total) + ",\n"
 		}
 
 	}
+	cmdTop := exec.Command("sh", "-c", "top -bn 1 -i -c | head -n 3 | tail -1 | awk {'print $8'}")
+	out2, err := cmdTop.CombinedOutput()
+	if err != nil {
+		log.Fatal(err)
+	}
+	outputTop := string(out2[:])
+	outputTop = strings.Trim(outputTop, "\n")
+	CPU_Top, err := strconv.ParseFloat(outputTop, 8)
+
+	respuesta += "\"CPU_TOP\": " + fmt.Sprintf("%v", 100.0-CPU_Top) + "}"
 
 	json.Unmarshal([]byte(respuesta), &response)
 	respondWithJSON(w, http.StatusOK, response)
