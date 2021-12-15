@@ -134,7 +134,7 @@ export class MonitorCpuComponent implements OnInit {
       console.log(this.listaGrafica)
       this.listaGrafica=[...this.listaGrafica]
 
-      this.Utilizacion_CPU=obj.CPU
+      this.Utilizacion_CPU=String(Number(obj.CPU)/8)
       this.Utilizacion_CPU_TOP=obj.CPU_TOP
     }else{
       alert("No se obtuvo Respuesta!");
