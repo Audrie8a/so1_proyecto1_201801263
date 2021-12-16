@@ -38,11 +38,11 @@
   </div>
 
   <div class="Arbol">
-    <button (click)="getProcesos()">Actualizar</button>
+    <button (click)="getProcesos()" id="Botones">Actualizar</button>
     <mat-accordion *ngFor="let proceso of Procesos">
       <mat-expansion-panel  (opened)="panelOpenState = true"
                            (closed)="panelOpenState = false">
-        <mat-expansion-panel-header>
+        <mat-expansion-panel-header id="Padre">
           <mat-panel-title>
             {{proceso.Proceso}}
 
@@ -51,46 +51,49 @@
             PID: {{proceso.PID}}
           </mat-panel-description>
         </mat-expansion-panel-header>
-        <p>Usuario: {{proceso.Usuario}}</p>
-        <p>Ram: {{(proceso.RamB/proceso.Memoria_TotalM)*100}}%        </p>
-        <p>Estado: {{proceso.Estado}}</p>
+        <div id="DatosPadre">
+          <p><b>Usuario:</b> {{proceso.Usuario}}</p>
+          <p><b>Ram:</b> {{(proceso.RamB/proceso.Memoria_TotalM)*100}}%        </p>
+          <p><b>Estado:</b> {{proceso.Estado}}</p>
 
-        <mat-accordion>
-          <mat-expansion-panel  (opened)="panelOpenState = true"
-                               (closed)="panelOpenState = false">
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                Hijos
-              </mat-panel-title>
-              <mat-panel-description>
-                Hijos del proceso
-              </mat-panel-description>
-            </mat-expansion-panel-header>
 
-            <mat-accordion *ngFor="let procesoHijo of proceso.hijos">
-              <mat-expansion-panel  (opened)="panelOpenState = true"
-                                   (closed)="panelOpenState = false">
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    {{procesoHijo.Proceso_Hijo}}
-                  </mat-panel-title>
-                  <mat-panel-description>
-                    PID: {{procesoHijo.PID}}
-                  </mat-panel-description>
-                </mat-expansion-panel-header>
-                <p>Usuario: {{procesoHijo.Usuario}}</p>
-                <p>Ram: {{(procesoHijo.RamB/proceso.Memoria_TotalM)*100}}%        </p>
-                <p>Estado: {{procesoHijo.Estado}}</p>
-              </mat-expansion-panel>
+          <mat-accordion>
+            <mat-expansion-panel  (opened)="panelOpenState = true"
+                                (closed)="panelOpenState = false">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Hijos
+                </mat-panel-title>
+                <mat-panel-description>
+                  Hijos del proceso
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <div class="hijos">
+                <mat-accordion *ngFor="let procesoHijo of proceso.hijos">
+                  <mat-expansion-panel  (opened)="panelOpenState = true"
+                                      (closed)="panelOpenState = false">
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        {{procesoHijo.Proceso_Hijo}}
+                      </mat-panel-title>
+                      <mat-panel-description>
+                        PID: {{procesoHijo.PID}}
+                      </mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <p><b>Usuario:</b> {{procesoHijo.Usuario}}</p>
+                    <p><b>Ram:</b> {{(procesoHijo.RamB/proceso.Memoria_TotalM)*100}}%        </p>
+                    <p><b>Estado:</b> {{procesoHijo.Estado}}</p>
+                  </mat-expansion-panel>
+              </mat-accordion>
+            </div>
+            </mat-expansion-panel>
+
+            <mat-action-row>
+              <button mat-button color="warn" id="Botones" (click)="killProceso(proceso.PID)">Kill</button>
+            </mat-action-row>
+
           </mat-accordion>
-
-          </mat-expansion-panel>
-
-          <mat-action-row>
-            <button mat-button color="warn" (click)="killProceso(proceso.PID)">Kill</button>
-          </mat-action-row>
-
-        </mat-accordion>
+        </div>
 
 
 
