@@ -1,0 +1,36 @@
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-12 mt-5 animate__animated animate__fadeIn animate__faster">
+            <h1>Top áreas con mayor vacunados con esquema completo</h1>
+        </div>
+    </div>
+    <div class="row mt-3" style="height: 60vh;">
+        <div class="col-12 col-sm-12 col-md-4 my-3 mt-5 animate__animated animate__bounceIn animate__faster align-self-end" style="animation-delay: 180ms;">
+            <div class="card" style="width: 100%; height: 35vh; background-color: #04293A ; color:white;">
+                <div class="card-body">
+                    <h5 class="card-title center">{{top[1]?._id || ''}}</h5>
+                    <p class="card-text center">Número de vacunados: {{top[1]?.count || ''}}</p>
+                    <h2>2</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-4 my-3 mt-5 animate__animated animate__bounceIn animate__faster align-self-end" style="animation-delay: 90ms;">
+            <div class="card" style="width: 100%; height:55vh; background-color: #064663; color:white">
+                <div class="card-body">
+                    <h5 class="card-title center">{{top[0]?._id || ''}}</h5>
+                    <p class="card-text center">Número de vacunados: {{top[0]?.count || ''}}</p>
+                    <h2>1</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-4 my-3 mt-5 animate__animated animate__bounceIn animate__faster align-self-end" style="animation-delay: 270ms;">
+            <div class="card" style="width: 100%; height:20vh; background-color: #04293A; color: white;">
+                <div class="card-body">
+                    <h5 class="card-title center">{{top[2]?._id || ''}}</h5>
+                    <p class="card-text center">Número de vacunados: {{top[2]?.count || ''}}</p>
+                    <h2>3</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

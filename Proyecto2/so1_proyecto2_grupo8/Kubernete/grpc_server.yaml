@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: server
+  name: server
+  namespace: project
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: server
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      containers:
+      - image: audrie8a/svr-grpc
+        imagePullPolicy: Always
+        name: server
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: server
+  name: server
+  namespace: project
+spec:
+  ports:
+  - port: 50051
+    protocol: TCP
+    targetPort: 50051
+  selector:
+    app: server

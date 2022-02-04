@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: client
+  name: client
+  namespace: project
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client
+  template:
+    metadata:
+      labels:
+        app: client
+    spec:
+      containers:
+      - image: audrie8a/grpc-client
+        imagePullPolicy: Always
+        name: client
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: client
+  name: client
+  namespace: project
+spec:
+  ports:
+  - port: 5000
+    protocol: TCP
+    targetPort: 8000
+  selector:
+    app: client

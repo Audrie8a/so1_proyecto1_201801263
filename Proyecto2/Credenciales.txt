@@ -1,0 +1,14 @@
+{
+"name": "Pablo Mendoza",
+"location": "Ciudad Guatemala",
+"age":35,
+"vaccine_type": "Sputnik V",
+"n_dose": 2
+}
+
+
+db.createUser({
+    user: 'Uso1',
+    pwd: '123',
+    roles: [{ role: 'readWrite', db:'so1'}]
+})

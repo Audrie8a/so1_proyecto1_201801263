@@ -1,0 +1,1 @@
+cmd_/media/audrie8a/Archivos/Sopes1/Lab/Proyecto1/Backend/ModulosKernel/cpu/cpu.mod := { echo  /media/audrie8a/Archivos/Sopes1/Lab/Proyecto1/Backend/ModulosKernel/cpu/cpu.o;  echo; } > /media/audrie8a/Archivos/Sopes1/Lab/Proyecto1/Backend/ModulosKernel/cpu/cpu.mod

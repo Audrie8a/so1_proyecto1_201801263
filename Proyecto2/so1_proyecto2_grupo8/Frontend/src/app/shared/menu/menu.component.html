@@ -1,0 +1,41 @@
+
+<div class="container mt-3">
+    <nav class="navbar navbar-expand-lg navbar-dark fondo" style="border-radius: 10px;">
+        <div class="container-fluid">
+            <img src="../../../assets/icon.png" class="mx-2 my-1" style="width:35px;" routerLink="/home">
+            <a class="navbar-brand p-2" routerLink="/home"><span class="mx-3">Covidero</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link p-2" routerLink="/data/top" routerLinkActive="active">Top áreas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link p-2" routerLink="/data/data" routerLinkActive="active">Registros</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false" routerLinkActive="active">
+                            Gráfico Circular
+                        </a>
+                        <ul class="dropdown-menu fondo" aria-labelledby="navbarDropdownMenuLink">
+                            <li><a class="dropdown-item blanco" routerLink="/data/dosis" routerLinkActive="active">Primera dosis</a></li>
+                            <li><a class="dropdown-item blanco" routerLink="/data/completo" routerLinkActive="active">Esquema completo</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false" routerLinkActive="active">
+                            Redis
+                        </a>
+                        <ul class="dropdown-menu fondo" aria-labelledby="navbarDropdownMenuLink">
+                            <li><a class="dropdown-item blanco" routerLink="/data/redis" routerLinkActive="active">Últimos 5 vacunados</a></li>
+                            <li><a class="dropdown-item blanco" routerLink="/data/redis-barras" routerLinkActive="active">Rangos de edad</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>

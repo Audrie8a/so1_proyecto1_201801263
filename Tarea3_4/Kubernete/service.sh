@@ -1,0 +1,1 @@
+kubectl expose deployment/deploy-201801263 --target-port=3000 --port=80 --type=LoadBalancer --name=svc-201801263 -n audrie

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: deploy-201801263
+  name: deploy-201801263
+  namespace: audrie
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deploy-201801263
+  template:
+    metadata:
+      labels:
+        app: deploy-201801263
+    spec:
+      containers:
+      - image: audrie8a/imagen-201801263
+        imagePullPolicy: Always
+        name: deploy-201801263

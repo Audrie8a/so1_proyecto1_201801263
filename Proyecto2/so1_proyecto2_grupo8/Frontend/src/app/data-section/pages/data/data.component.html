@@ -1,0 +1,28 @@
+<h1 class="mt-5 animate__animated animate__fadeIn animate__fast">Registro de base de datos</h1>
+<p class="blanco animate__animated animate__fadeIn animate__fast" style="text-align:center; font-size:110%; animation-delay: 100ms;">Recuento de datos actual: {{data.length}} registros</p>
+<div class="container mt-4 animate__animated animate__backInUp animate__faster" style="height: 75vh; overflow: auto; animation-delay: 200ms;">
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">ID</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Departamento</th>
+            <th scope="col">Edad</th>
+            <th scope="col">Tipo Vacuna</th>
+            <th scope="col">Dosis</th>
+          </tr>
+        </thead>
+        <tbody >
+          <tr *ngFor="let item of data; let i = index">
+            <th scope="row">{{i + 1}}</th>
+            <td>{{item._id}}</td>
+            <td>{{item.name}}</td>
+            <td>{{item.location}}</td>
+            <td>{{item.age}}</td>
+            <td>{{item.vaccine_type}}</td>
+            <td>{{item.n_dose}}</td>
+          </tr>
+        </tbody>
+      </table>
+</div>

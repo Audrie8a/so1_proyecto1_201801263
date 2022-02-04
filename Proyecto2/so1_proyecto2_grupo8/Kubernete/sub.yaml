@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: sub
+  name: sub
+  namespace: project
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sub
+  template:
+    metadata:
+      labels:
+        app: sub
+    spec:
+      containers:
+      - image: loumelini/sub
+        imagePullPolicy: Always
+        name: sub
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: sub
+  name: sub
+  namespace: project
+spec:
+  ports:
+  - port: 5001
+    protocol: TCP
+    targetPort: 5001
+  selector:
+    app: sub

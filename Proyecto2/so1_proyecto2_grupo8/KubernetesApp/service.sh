@@ -1,0 +1,1 @@
+kubectl expose deployment/node --target-port=3000 --port=80 --type=LoadBalancer --name=load

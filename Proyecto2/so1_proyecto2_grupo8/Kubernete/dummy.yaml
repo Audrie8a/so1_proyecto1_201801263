@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: load
+  name: load
+  namespace: project
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: load
+  template:
+    metadata:
+      labels:
+        app: load
+    spec:
+      containers:
+      - image: loumelini/pub
+        imagePullPolicy: Always
+        name: load
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: load
+  name: load
+  namespace: project
+spec:
+  ports:
+  - port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: load
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: load-ingress
+  namespace: project
+  annotations:
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+      grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: load.covidero.ml
+      http:
+        paths:
+          - backend:
+              service:
+                name: load
+                port: 
+                  number: 5000
+            path: /
+            pathType: Prefix
